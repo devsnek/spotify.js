@@ -75,9 +75,9 @@ function getOauthToken() {
   return snekfetch.get('https://open.spotify.com/token').then((r) => r.body.t);
 }
 
+const ASCII_LOWER_CASE = 'abcdefghijklmnopqrstuvwxyz';
 function randomSpotifyDomain() {
   let text = '';
-  const ASCII_LOWER_CASE = 'abcdefghijklmnopqrstuvwxyz';
   while (text.length < 10) text += ASCII_LOWER_CASE[Math.floor(Math.random() * ASCII_LOWER_CASE.length)];
   return text;
 }
