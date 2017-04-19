@@ -21,7 +21,11 @@ class Spotify {
   getLocalPort() {
     return new Promise((resolve, reject) => {
       const findLocalSpotify = () => {
-        if (this.port > 4380) return reject('Spotify server was not found in range 4370-4380');
+        if (this.port > 4380) {
+          this.port = 4370;
+          return reject('Spotify server was not found in range 4370-4380');
+        }
+
         this.getVersion()
         .then(() => resolve(this.port))
         .catch(() => {
@@ -53,6 +57,10 @@ class Spotify {
     return this.runCommand('status');
   }
 
+  open() {
+    return this.runCommand('open');
+  }
+
   play(uri) {
     if (uri) return this.runCommand('play', { uri });
     else return this.status().then((s) => this.play(s.track.track_resource.uri));
@@ -67,9 +75,16 @@ class Spotify {
   }
 
   _request(path) {
-    return snekfetch.get(`https://${randomSpotifySubdomain()}:${this.port}${path}`)
-      .set('Origin', 'https://open.spotify.com')
-      .then((r) => r.body);
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject('Request timeout'), 1000);
+      return snekfetch.get(`https://${randomSpotifySubdomain()}:${this.port}${path}`)
+        .set('Origin', 'https://open.spotify.com')
+        .then((r) => {
+          clearTimeout(timeout);
+          resolve(r.body);
+        })
+        .catch((r) => reject(r.body ? r.body : r));
+    });
   }
 }
 
