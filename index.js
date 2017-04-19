@@ -9,7 +9,7 @@ class Spotify {
   }
 
   init() {
-    return this.getLocalUrl()
+    return this.getLocalPort()
       .then(() => Promise.all([getOauthToken(), this.getCSRF()]))
       .then(([oauth, csrf]) => {
         this.oauth = oauth;
@@ -18,14 +18,16 @@ class Spotify {
       });
   }
 
-  getLocalUrl() {
+  getLocalPort() {
     return new Promise((resolve, reject) => {
       const findLocalSpotify = () => {
         if (this.port > 4380) return reject('Spotify server was not found in range 4370-4380');
-        const url = `https://${randomSpotifyDomain()}.spotilocal.com:${this.port}/`;
-        this.getVersion(url)
-        .then(() => resolve(url))
-        .catch(() => { findLocalSpotify(++this.port); });
+        this.getVersion()
+        .then(() => resolve(this.port))
+        .catch(() => {
+          this.port++;
+          findLocalSpotify();
+        });
       };
       findLocalSpotify();
     });
@@ -65,7 +67,7 @@ class Spotify {
   }
 
   _request(path) {
-    return snekfetch.get(`https://${randomSpotifyDomain()}.spotilocal.com:${this.port}${path}`)
+    return snekfetch.get(`https://${randomSpotifySubdomain()}:${this.port}${path}`)
       .set('Origin', 'https://open.spotify.com')
       .then((r) => r.body);
   }
@@ -75,11 +77,11 @@ function getOauthToken() {
   return snekfetch.get('https://open.spotify.com/token').then((r) => r.body.t);
 }
 
-const ASCII_LOWER_CASE = 'abcdefghijklmnopqrstuvwxyz';
-function randomSpotifyDomain() {
-  let text = '';
-  while (text.length < 10) text += ASCII_LOWER_CASE[Math.floor(Math.random() * ASCII_LOWER_CASE.length)];
-  return text;
+const ASCII = 'abcdefghijklmnopqrstuvwxyz';
+function randomSpotifySubdomain() {
+  let subdomain = '';
+  while (subdomain.length < 10) subdomain += ASCII[Math.floor(Math.random() * ASCII.length)];
+  return `${subdomain}.spotilocal.com`;
 }
 
 module.exports = Spotify;
