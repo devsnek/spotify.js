@@ -23,7 +23,8 @@ class Spotify {
       const findLocalSpotify = () => {
         if (this.port > 4380) {
           this.port = 4370;
-          return reject('Spotify server was not found in range 4370-4380');
+          reject(new Error('Spotify server was not found in range 4370-4380'));
+          return;
         }
 
         this.getVersion()
@@ -49,8 +50,7 @@ class Spotify {
   }
 
   getCSRF() {
-    return this._request('/simplecsrf/token.json')
-      .then((b) => b.token);
+    return this._request('/simplecsrf/token.json').then((b) => b.token);
   }
 
   status() {
@@ -76,7 +76,7 @@ class Spotify {
 
   _request(path) {
     return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => reject('Request timeout'), 1000);
+      const timeout = setTimeout(() => reject(new Error('Request timeout')), 1000);
       return snekfetch.get(`https://${randomSpotifySubdomain()}:${this.port}${path}`)
         .set('Origin', 'https://open.spotify.com')
         .then((r) => {
