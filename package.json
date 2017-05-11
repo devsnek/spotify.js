@@ -9,12 +9,12 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/guscaplan/spotify.js.git"
+    "url": "git+https://github.com/devsnek/spotify.js.git"
   },
   "author": "Gus Caplan <me@gus.host>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/guscaplan/spotify.js/issues"
+    "url": "https://github.com/devsnek/spotify.js/issues"
   },
-  "homepage": "https://github.com/guscaplan/spotify.js#readme"
+  "homepage": "https://github.com/devsnek/spotify.js#readme"
 }
