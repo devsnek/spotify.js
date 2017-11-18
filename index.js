@@ -77,7 +77,7 @@ class Spotify {
   _request(path) {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('Request timeout')), 1000);
-      return snekfetch.get(`https://${randomSpotifySubdomain()}:${this.port}${path}`)
+      return snekfetch.get(`http://127.0.0.1:${this.port}${path}`)
         .set('Origin', 'https://open.spotify.com')
         .then((r) => {
           clearTimeout(timeout);
@@ -90,13 +90,6 @@ class Spotify {
 
 function getOauthToken() {
   return snekfetch.get('https://open.spotify.com/token').then((r) => r.body.t);
-}
-
-const ASCII = 'abcdefghijklmnopqrstuvwxyz';
-function randomSpotifySubdomain() {
-  let subdomain = '';
-  while (subdomain.length < 10) subdomain += ASCII[Math.floor(Math.random() * ASCII.length)];
-  return `${subdomain}.spotilocal.com`;
 }
 
 module.exports = Spotify;

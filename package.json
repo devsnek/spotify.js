@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "snekfetch": "guscaplan/snekfetch"
+    "snekfetch": "^3.5.8"
   },
   "devDependencies": {},
   "repository": {
